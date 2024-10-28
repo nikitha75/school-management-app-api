@@ -15,7 +15,7 @@ exports.createStudent = async (req, res) => {
     classId,
     role = 0,
   } = req.body;
-  if (!name || !gender || !dob || !phone || !address || !feesPaid) {
+  if (!name || !gender || !dob || !phone || !address) {
     return res.status(400).json("All fields are required!");
   }
   try {

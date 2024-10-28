@@ -16,7 +16,7 @@ exports.createTeacher = async (req, res) => {
     role = 1,
   } = req.body;
 
-  if (!name || !gender || !dob || !phone || !address || !salary) {
+  if (!name || !gender || !dob || !phone || !address) {
     return res.status(400).json("All fields are required!");
   }
   try {
