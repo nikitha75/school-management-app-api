@@ -23,12 +23,6 @@ const teacherSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
-    // address: {
-    //   street: { type: String },
-    //   city: { type: String },
-    //   state: { type: String },
-    //   zip: { type: String },
-    // },
   },
   salary: {
     type: Number,
@@ -38,7 +32,6 @@ const teacherSchema = new mongoose.Schema({
   assignedClass: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Class",
-    // required: true,
   },
   role: {
     type: Number,
@@ -48,19 +41,6 @@ const teacherSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  // assignedClasses: [
-  //   {
-  //     classId: {
-  //       type: mongoose.Schema.Types.ObjectId,
-  //       ref: "Class",
-  //       required: true,
-  //     },
-  //     subject: {
-  //       type: String,
-  //       required: true,
-  //     },
-  //   },
-  // ],
 });
 
 module.exports = mongoose.model("Teacher", teacherSchema);

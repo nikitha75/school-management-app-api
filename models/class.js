@@ -4,7 +4,6 @@ const classSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    // unique: true
   },
   year: {
     type: Date,
@@ -13,7 +12,6 @@ const classSchema = new mongoose.Schema({
   teacher: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Teacher",
-    // unique: true,
   },
   studentFees: {
     type: Number,

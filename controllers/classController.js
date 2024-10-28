@@ -9,15 +9,9 @@ const adminRole = parseInt(process.env.ADMIN_ROLE);
 exports.createClass = async (req, res) => {
   const { userId } = req.params;
   const { name, year, teacher, studentFees, students } = req.body;
-
-  //   if (!name || !year || !teacher || !studentFees || !students) {
-  //     return res.status(400).json("All fields are required!");
-  //   }
-
   if (!name || !year || !studentFees) {
     return res.status(400).json("All fields are required!");
   }
-
   try {
     if (req.userId === userId) {
       const newClass = await Class.create({
@@ -49,7 +43,6 @@ exports.createClass = async (req, res) => {
 
 exports.getClass = async (req, res) => {
   const { classId, userId } = req.params;
-
   try {
     if (req.userId === userId) {
       const classDetails = await Class.find({ _id: classId });
@@ -59,7 +52,6 @@ exports.getClass = async (req, res) => {
           message: "Class doesn't exist.",
         });
       }
-
       return res.status(200).json({
         success: true,
         message: "Fetched Class!",
@@ -90,7 +82,6 @@ exports.getClasses = async (req, res) => {
           message: "No class found",
         });
       }
-
       return res.status(200).json({
         success: true,
         message: "Fetched Classes!",
@@ -113,39 +104,24 @@ exports.getClasses = async (req, res) => {
 exports.updateClass = async (req, res) => {
   const { classId, userId } = req.params;
   const { name, year, teacherId, studentFees, studentId } = req.body;
-
   try {
     if (req.userId === userId) {
-      // if (req.classId === classId) {}
-      // else{
-      //   res.status(401).json({
-      //     success: false,
-      //     error: "Unauthorized to update class",
-      //   });
-      // }
-
       const isClassExist = await Class.findById(classId);
       if (!isClassExist) {
         return res.status(400).json({
           error: "Class doesn't exist.",
         });
       }
-
       const updatedData = {};
-
       if (name) {
         updatedData.name = name;
       }
-
       if (year) {
         updatedData.year = year;
       }
-
       if (studentFees) {
-        // updatedData.studentFees = updatedData.studentFees || [];
         updatedData.studentFees = studentFees;
       }
-
       if (teacherId) {
         await Teacher.findOneAndUpdate(
           { assignedClass: classId },
@@ -165,23 +141,6 @@ exports.updateClass = async (req, res) => {
         );
         updatedData.teacher = teacherId;
       }
-
-      // if (students) {
-      //   updatedData.students = students;
-      // }
-
-      // if (students) {
-      //   updatedData.students = students;
-      // }
-
-      // if (students && students.length > 0) {
-      // const updatedStudents = await Student.updateMany(
-      //   { _id: { $in: students } },
-      //   { classId },
-      //   { new: true }
-      // );
-      // }
-
       if (studentId) {
         const isStudentExist = await Student.findById(studentId);
         if (!isStudentExist) {
@@ -198,11 +157,9 @@ exports.updateClass = async (req, res) => {
           ...new Set([...isClassExist.students, studentId]),
         ];
       }
-
       const updatedClass = await Class.findByIdAndUpdate(classId, updatedData, {
         new: true,
       });
-
       res.status(200).json({
         success: true,
         message: "Class updated!",
@@ -233,7 +190,6 @@ exports.getTeacher = async (req, res) => {
           message: "Student doesn't exist.",
         });
       }
-
       const classDetails = await Class.findOne({ _id: student.class });
       if (!classDetails) {
         return res.status(400).json({
@@ -241,15 +197,6 @@ exports.getTeacher = async (req, res) => {
           message: "No class found",
         });
       }
-
-      // const classDetails = await Class.findOne({ teacher: teacherId });
-      // if (!classDetails) {
-      //   return res.status(400).json({
-      //     success: false,
-      //     message: "No class found",
-      //   });
-      // }
-
       const teacher = await Teacher.findById({ _id: classDetails.teacher });
       if (!teacher) {
         return res.status(400).json({
@@ -257,7 +204,6 @@ exports.getTeacher = async (req, res) => {
           message: "No teacher found",
         });
       }
-
       return res.status(200).json({
         success: true,
         message: "Fetched teacher details!",
@@ -279,7 +225,6 @@ exports.getTeacher = async (req, res) => {
 
 exports.getStudents = async (req, res) => {
   const { teacherId, userId } = req.params;
-
   try {
     if (
       (req.role === teacherRole || req.role === adminRole) &&
@@ -294,13 +239,12 @@ exports.getStudents = async (req, res) => {
             message: "No class found",
           });
         }
+        return res.status(200).json({
+          success: true,
+          message: "Fetched Students!",
+          studentsData: adminStudentsData,
+        });
       } else {
-        // return res.status(200).json({
-        //   success: true,
-        //   message: "Fetched Classes!",
-        //   classes,
-        // });
-
         const teacher = await Teacher.find({ _id: teacherId });
         if (!teacher) {
           return res.status(400).json({
@@ -308,7 +252,6 @@ exports.getStudents = async (req, res) => {
             message: "Teacher doesn't exist.",
           });
         }
-
         const classDetails = await Class.findOne({ teacher: teacherId });
         if (!classDetails) {
           return res.status(400).json({
@@ -316,7 +259,6 @@ exports.getStudents = async (req, res) => {
             message: "No class found",
           });
         }
-
         let studentsList = [];
         for (const studentId of classDetails.students) {
           const student = await Student.findOne({ _id: studentId });
@@ -324,13 +266,12 @@ exports.getStudents = async (req, res) => {
             studentsList.push(student);
           }
         }
+        return res.status(200).json({
+          success: true,
+          message: "Fetched Students!",
+          studentsData: studentsList,
+        });
       }
-
-      return res.status(200).json({
-        success: true,
-        message: "Fetched Students!",
-        studentsData: adminStudentsData ? adminStudentsData : studentsList,
-      });
     } else {
       res.status(401).json({
         success: false,

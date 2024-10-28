@@ -23,27 +23,15 @@ const studentSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
-    // address: {
-    //   street: { type: String },
-    //   city: { type: String },
-    //   state: { type: String },
-    //   zip: { type: String },
-    // },
   },
   feesPaid: {
     type: Boolean,
     default: false,
     required: true,
   },
-  // feesPaid: {
-  //   type: Number,
-  //   default: 0,
-  //   required: true,
-  // },
   class: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Class",
-    // required: true,
   },
   role: {
     type: Number,

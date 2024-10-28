@@ -1,13 +1,10 @@
 const Student = require("../models/student");
 const Class = require("../models/class");
-const Teacher = require("../models/teacher");
 
 const studentRole = parseInt(process.env.STUDENT_ROLE);
-const teacherRole = parseInt(process.env.TEACHER_ROLE);
 
 exports.createStudent = async (req, res) => {
   const { userId } = req.params;
-
   const {
     name,
     gender,
@@ -18,24 +15,12 @@ exports.createStudent = async (req, res) => {
     classId,
     role = 0,
   } = req.body;
-
-  // const { name, gender, dob, contactDetails, feesPaid, classId } = req.body;
-  // const { phone, address } = contactDetails;
-
-  //   if (!name || !gender || !dob || !phone || !address || !feesPaid || !classId) {
-  //     return res.status(400).json("All fields are required!");
-  //   }
-
   if (!name || !gender || !dob || !phone || !address || !feesPaid) {
     return res.status(400).json("All fields are required!");
   }
-
-  // const role = isTeacher ? 1 : 0;
-
   try {
     if (req.userId === userId) {
       const classDetails = await Class.findById(classId);
-
       const student = await Student.create({
         name,
         gender,
@@ -49,17 +34,6 @@ exports.createStudent = async (req, res) => {
         userId,
         role,
       });
-
-      // contactDetails: {
-      //     phone,
-      //     address: {
-      //         street: address.street,
-      //         city: address.city,
-      //         state: address.state,
-      //         zip: address.zip
-      //       }
-      //   },
-
       res.status(200).json({
         success: true,
         message: "Profile setup successful!",
@@ -81,18 +55,15 @@ exports.createStudent = async (req, res) => {
 
 exports.getStudent = async (req, res) => {
   const { studentId, userId } = req.params;
-
   try {
     if (req.role === studentRole && req.userId === userId) {
       const student = await Student.findById({ _id: studentId });
-
       if (!student) {
         return res.status(400).json({
           success: false,
           message: "Student doesn't exist.",
         });
       }
-
       return res.status(200).json({
         success: true,
         message: "Fetched profile!",
@@ -115,18 +86,7 @@ exports.getStudent = async (req, res) => {
 exports.updateStudent = async (req, res) => {
   const { studentId, userId } = req.params;
   const { name, gender, dob, phone, address, feesPaid, classId } = req.body;
-
-  // const { name, gender, dob, contactDetails, feesPaid, classId } = req.body;
-
   try {
-    // if (req.studentId === studentId) {}
-    // else{
-    //   res.status(401).json({
-    //     success: false,
-    //     error: "Unauthorized to update student",
-    //   });
-    // }
-
     if (req.role === studentRole && req.userId === userId) {
       const isStudentExist = await Student.findById(studentId);
       if (!isStudentExist) {
@@ -134,28 +94,22 @@ exports.updateStudent = async (req, res) => {
           error: "Student doesn't exist.",
         });
       }
-
       const updatedData = {};
-
       if (name) {
         updatedData.name = name;
       }
-
       if (gender) {
         updatedData.gender = gender;
       }
-
       if (dob) {
         updatedData.dob = new Date(dob);
       }
-
       if (phone) {
         updatedData.contactDetails = {
           ...isStudentExist.contactDetails,
           phone,
         };
       }
-
       if (address) {
         updatedData.contactDetails = updatedData.contactDetails
           ? { ...updatedData.contactDetails, address }
@@ -164,11 +118,9 @@ exports.updateStudent = async (req, res) => {
               address,
             };
       }
-
       if (feesPaid) {
         updatedData.feesPaid = feesPaid;
       }
-
       if (classId) {
         const isClassExist = await Class.findById(classId);
         if (!isClassExist) {
@@ -183,13 +135,11 @@ exports.updateStudent = async (req, res) => {
           { new: true }
         );
       }
-
       const updatedStudent = await Student.findByIdAndUpdate(
         studentId,
         updatedData,
         { new: true }
       );
-
       res.status(200).json({
         success: true,
         message: "Updated details!",
