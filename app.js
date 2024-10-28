@@ -11,7 +11,16 @@ const authRoutes = require("./routes/authRoutes");
 
 connectDB();
 
-app.use(cors());
+const corsOpts = {
+  origin: "https://schoolwave-nk.onrender.com",
+  credentials: true,
+  methods: ["GET", "POST", "HEAD", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  exposedHeaders: ["Content-Type"],
+};
+
+app.use(cors(corsOpts));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
